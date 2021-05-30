@@ -19,7 +19,6 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from time import sleep, asctime
 from pyngrok import ngrok, conf
-from threading import Thread
 
 
 
@@ -45,23 +44,24 @@ def checkId(i):
 def ngrokIp(update: Update, context: CallbackContext) -> None:
   if not checkId(update.message.chat_id):
     return
-  update.message.reply_text(tunnel.public_url)
-    
+  if len(ngrok.get_tunnels()) == 0:
+    update.message.reply_text("No connections")
+  else:
+    update.message.reply_text(tunnel.public_url)
 
-def echo(update: Update, context: CallbackContext) -> None:
-  """Echo the user message."""
-  # update.message.reply_text(update.message.text)
-  pass
 
-def ngrokConnect():
+def ngrokConnect(update: Update, context: CallbackContext) -> None:
   global tunnel
   conf.get_default().region = "eu"
   tunnel = ngrok.connect(4000, 'tcp')
   process = ngrok.get_ngrok_process()
 
-def main():
-  ngrokConnect()
 
+def ngrokDisconnect(update: Update, context: CallbackContext) -> None:
+  pass
+
+
+def main():
   # Enable logging
   # logging.basicConfig(
     # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -78,6 +78,9 @@ def main():
 
   # on different commands - answer in Telegram
   dispatcher.add_handler(CommandHandler("ip", ngrokIp))
+  dispatcher.add_handler(CommandHandler("connect", ngrokConnect))
+  dispatcher.add_handler(CommandHandler("disconnect", ngrokDisconnect))
+
 
   # on noncommand i.e message - echo the message on Telegram
   dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
