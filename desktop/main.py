@@ -44,6 +44,7 @@ def checkId(i):
 def ngrokIp(update: Update, context: CallbackContext) -> None:
   if not checkId(update.message.chat_id):
     return
+
   if len(ngrok.get_tunnels()) == 0:
     update.message.reply_text("No connections")
   else:
@@ -51,15 +52,27 @@ def ngrokIp(update: Update, context: CallbackContext) -> None:
 
 
 def ngrokConnect(update: Update, context: CallbackContext) -> None:
+  if not checkId(update.message.chat_id):
+    return
+    
   global tunnel
-  conf.get_default().region = "eu"
-  tunnel = ngrok.connect(4000, 'tcp')
-  process = ngrok.get_ngrok_process()
+  if len(ngrok.get_tunnels()) == 1:
+    msg = "Already connected at: " + str(tunnel.public_url)
+    update.message.reply_text(msg)
+  elif len(ngrok.get_tunnels() > 1):
+    update.message.reply_text("Error! Multiple tunnels running!")
+  else:
+    conf.get_default().region = "eu"
+    tunnel = ngrok.connect(4000, 'tcp')
+    process = ngrok.get_ngrok_process()
 
 
 def ngrokDisconnect(update: Update, context: CallbackContext) -> None:
-  pass
-
+  if not checkId(update.message.chat_id):
+    return
+  update.message.reply_text("There are " + str(len(ngrok.get_tunnels())) + " open tunnel(s)")
+  ngrok.disconnect(tunnel.public_url)
+  update.message.reply_text(str(len(ngrok.get_tunnels())) + " tunnel(s) left open")
 
 def main():
   # Enable logging
@@ -80,7 +93,6 @@ def main():
   dispatcher.add_handler(CommandHandler("ip", ngrokIp))
   dispatcher.add_handler(CommandHandler("connect", ngrokConnect))
   dispatcher.add_handler(CommandHandler("disconnect", ngrokDisconnect))
-
 
   # on noncommand i.e message - echo the message on Telegram
   dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
