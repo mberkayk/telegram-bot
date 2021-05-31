@@ -95,7 +95,7 @@ def main():
   dispatcher.add_handler(CommandHandler("disconnect", ngrokDisconnect))
 
   # on noncommand i.e message - echo the message on Telegram
-  dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+  # dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
   # Start the Bot
   updater.start_polling()
