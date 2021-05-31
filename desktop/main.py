@@ -59,7 +59,7 @@ def ngrokConnect(update: Update, context: CallbackContext) -> None:
   if len(ngrok.get_tunnels()) == 1:
     msg = "Already connected at: " + str(tunnel.public_url)
     update.message.reply_text(msg)
-  elif len(ngrok.get_tunnels() > 1):
+  elif len(ngrok.get_tunnels()) > 1:
     update.message.reply_text("Error! Multiple tunnels running!")
   else:
     conf.get_default().region = "eu"
