@@ -65,6 +65,8 @@ def ngrokConnect(update: Update, context: CallbackContext) -> None:
     conf.get_default().region = "eu"
     tunnel = ngrok.connect(4000, 'tcp')
     process = ngrok.get_ngrok_process()
+    update.message.reply_text("Connected at " + tunnel.public_ip)
+
 
 
 def ngrokDisconnect(update: Update, context: CallbackContext) -> None:
