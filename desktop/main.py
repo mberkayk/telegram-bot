@@ -63,9 +63,9 @@ def ngrokConnect(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Error! Multiple tunnels running!")
   else:
     conf.get_default().region = "eu"
-    tunnel = ngrok.connect(4000, 'tcp')
+    tunnel = ngrok.connect(4000, 'tcp', region="eu")
     process = ngrok.get_ngrok_process()
-    update.message.reply_text("Connected at " + tunnel.public_ip)
+    update.message.reply_text("Connected at " + tunnel.public_url)
 
 
 
