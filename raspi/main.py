@@ -58,7 +58,6 @@ def relay_command(update: Update, context: CallbackContext) -> None:
 
 
 def shut_command(update: Update, context: CallbackContext) -> None:
-  print(update.mesage.chat_id)
   if not checkId(update.message.chat_id):
     return
   if relay.value == 0:
