@@ -24,7 +24,7 @@ import subprocess
 
 
 logFile = open("/home/pi/telegrambot/log", 'w')
-relay = OutputDevice(4, active_high=False)
+relay = OutputDevice(4, active_high=True)
 idFile = open("/home/pi/telegrambot/user_id.txt", 'r')
 user_id = int(idFile.read())
 idFile.close()
